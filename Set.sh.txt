@@ -1,0 +1,82 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# SHIFAT - ELITE TERMINAL - Installer
+# Created for Shifat Babu
+# Usage: bash <(curl -sL https://raw.githubusercontent.com/YOUR_USERNAME/SHIFAT/main/Set.sh)
+
+# Colors
+G='\033[92m'
+C='\033[96m'
+W='\033[97m'
+R='\033[0m'
+
+clear
+echo -e "${G}Installing SHIFAT Elite Terminal...${R}"
+pkg update -y > /dev/null 2>&1
+pkg install python -y > /dev/null 2>&1
+pip install psutil > /dev/null 2>&1
+
+# Create banner python file
+cat > $HOME/.shifat.py << 'PYEOF'
+import os, socket, shutil, psutil
+from datetime import datetime
+G="\033[92m"; C="\033[96m"; W="\033[97m"; D="\033[90m"; R="\033[0m"; BOLD="\033[1m"
+
+def get_ip():
+    try:
+        s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(("8.8.8.8",80)); ip=s.getsockname()[0]; s.close(); return ip
+    except: return "No Network"
+def get_storage():
+    t,u,f=shutil.disk_usage("/"); return f"{f/(2**30):.2f}G free / {t/(2**30):.0f}G"
+def get_memory():
+    vm=psutil.virtual_memory(); return f"{vm.used//(1024*1024)}/{vm.total//(1024*1024)} MB"
+
+LOGO = f"""{G}{BOLD}
+  ███████╗██╗  ██╗██╗███████╗ █████╗ ████████╗
+  ██╔════╝██║  ██║██║██╔════╝██╔══██╗╚══██╔══╝
+  ███████╗███████║██║█████╗  ███████║   ██║   
+  ╚════██║██╔══██║██║██╔══╝  ██╔══██║   ██║   
+  ███████║██║  ██║██║██║     ██║  ██║   ██║   
+  ╚══════╝╚═╝  ╚═╝╚═╝╚═╝     ╚═╝  ╚═╝   ╚═╝   
+{R}"""
+
+def banner():
+    os.system("clear")
+    now=datetime.now()
+    date_str=now.strftime("%d %B %Y  -  %A")
+    time_str=now.strftime("%I:%M:%S %p")
+    ip=get_ip(); storage=get_storage(); memory=get_memory()
+    print(f"{G}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}")
+    print(LOGO)
+    print(f"{W}                     ◆  ELITE TERMINAL  ◆{R}")
+    print(f"{G}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{R}\n")
+    print(f"{G} ┌────────────────────────────────────────────────────────┐")
+    print(f" │┌──────────────────────────────────────────────────────┐│")
+    print(f" ││{D}  ◧ DATE     {G}│  {W}{date_str:<36}{G}││")
+    print(f" ││{D}  ◍ TIME     {G}│  {W}{time_str:<36}{G}││")
+    print(f" │├──────────────────────────────────────────────────────┤│")
+    print(f" ││{D}  ○ NETWORK  {G}│  {C}{ip:<36}{G}││")
+    print(f" ││{D}  ▤ STORAGE  {G}│  {W}{storage:<36}{G}││")
+    print(f" ││{D}  ⚙ MEMORY   {G}│  {W}{memory:<36}{G}││")
+    print(f" │└──────────────────────────────────────────────────────┘│")
+    print(f" └────────────────────────────────────────────────────────┘{R}\n")
+    print(f"{D}               ❝  Stay focused. Stay dangerous.  ❞{R}\n")
+    print(f"{C} ──{G}💀{C}─{W} -̶-̶ :̶)💙 SHIFAT")
+    print(f"{C}   ┗━━━➤ {W}", end="")
+
+banner()
+PYEOF
+
+# Remove old entry if exists
+sed -i '/\.shifat\.py/d' $HOME/.bashrc 2>/dev/null
+sed -i '/SHIFAT/d' $HOME/.bashrc 2>/dev/null
+
+# Add auto run
+echo 'python $HOME/.shifat.py' >> $HOME/.bashrc
+
+# Run now
+python $HOME/.shifat.py
+
+echo ""
+echo -e "${G}✔ SHIFAT Elite Terminal Installed Successfully!${R}"
+echo -e "${W}Restart Termux to see magic.${R}"
+echo -e "${C}Created by SHIFAT Babu${R}"
